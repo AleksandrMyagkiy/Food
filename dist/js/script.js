@@ -291,10 +291,21 @@ window.addEventListener('DOMContentLoaded', () => {
     failure: 'Что-то пошло не так...'
   };
   forms.forEach(item => {
-    postData(item);
+    bindPostData(item);
   });
 
-  function postData(form) {
+  const postData = async (url, data) => {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: data
+    });
+    return await res.json();
+  };
+
+  function bindPostData(form) {
     form.addEventListener('submit', e => {
       e.preventDefault();
       const statusMessage = document.createElement('img');
@@ -309,13 +320,7 @@ window.addEventListener('DOMContentLoaded', () => {
       formData.forEach(function (value, key) {
         object[key] = value;
       });
-      fetch('server.php', {
-        method: "POST",
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify(object)
-      }).then(data => data.text()).then(data => {
+      postData('http://localhost:3000/requests', JSON.stringify(object)).then(data => {
         console.log(data);
         showThanksModal(message.success);
         statusMessage.remove();
@@ -346,7 +351,9 @@ window.addEventListener('DOMContentLoaded', () => {
       prevModalDialog.classList.remove('hide');
       closeModal();
     }, 4000);
-  } // Пример Fetch API
+  }
+
+  fetch('http://localhost:3000/menu').then(data => data.json()).then(res => console.log(res)); // Пример Fetch API
   // fetch('https://jsonplaceholder.typicode.com/posts', {
   // 	method: "POST",
   // 	body: JSON.stringify({name: 'Alex'}),
@@ -356,7 +363,6 @@ window.addEventListener('DOMContentLoaded', () => {
   // })
   // .then(response => response.json())
   // .then(json => console.log(json));
-
 });
 
 /***/ })
