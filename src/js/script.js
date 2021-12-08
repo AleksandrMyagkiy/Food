@@ -183,15 +183,15 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	const getResource = async (url) => {
-		const res = await fetch(url);
+	// const getResource = async (url) => {
+	// 	const res = await fetch(url);
 
-		if (!res.ok) {
-			throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-		}
+	// 	if (!res.ok) {
+	// 		throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+	// 	}
 
-		return await res.json();
-	};
+	// 	return await res.json();
+	// };
 
 	getResource('http://localhost:3000/menu')
 		.then(data => {
@@ -206,28 +206,41 @@ window.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 
+	// axios.get('http://localhost:3000/menu')
+	// 	.then(data => {
+	// 		data.data.forEach(({
+	// 			img,
+	// 			altimg,
+	// 			title,
+	// 			descr,
+	// 			price
+	// 		}) => {
+	// 			new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+	// 		});
+	// 	});
+
 	// getResource('http://localhost:3000/menu')
-    //     .then(data => createCard(data));
+	//     .then(data => createCard(data));
 
-    // function createCard(data) {
-    //     data.forEach(({img, altimg, title, descr, price}) => {
-    //         const element = document.createElement('div');
+	// function createCard(data) {
+	//     data.forEach(({img, altimg, title, descr, price}) => {
+	//         const element = document.createElement('div');
 
-    //         element.classList.add("menu__item");
+	//         element.classList.add("menu__item");
 
-    //         element.innerHTML = `
-    //             <img src=${img} alt=${altimg}>
-    //             <h3 class="menu__item-subtitle">${title}</h3>
-    //             <div class="menu__item-descr">${descr}</div>
-    //             <div class="menu__item-divider"></div>
-    //             <div class="menu__item-price">
-    //                 <div class="menu__item-cost">Цена:</div>
-    //                 <div class="menu__item-total"><span>${price}</span> грн/день</div>
-    //             </div>
-    //         `;
-    //         document.querySelector(".menu .container").append(element);
-    //     });
-    // }
+	//         element.innerHTML = `
+	//             <img src=${img} alt=${altimg}>
+	//             <h3 class="menu__item-subtitle">${title}</h3>
+	//             <div class="menu__item-descr">${descr}</div>
+	//             <div class="menu__item-divider"></div>
+	//             <div class="menu__item-price">
+	//                 <div class="menu__item-cost">Цена:</div>
+	//                 <div class="menu__item-total"><span>${price}</span> грн/день</div>
+	//             </div>
+	//         `;
+	//         document.querySelector(".menu .container").append(element);
+	//     });
+	// }
 
 	// Forms
 
@@ -244,7 +257,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	});
 
 	const postData = async (url, data) => {
-		const res = await fetch(url, {
+		let res = await fetch(url, {
 			method: "POST",
 			headers: {
 				'Content-type': 'application/json'
@@ -255,11 +268,21 @@ window.addEventListener('DOMContentLoaded', () => {
 		return await res.json();
 	};
 
+	async function getResource(url) {
+		let res = await fetch(url);
+
+		if (!res.ok) {
+			throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+		}
+
+		return await res.json();
+	}
+
 	function bindPostData(form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
 
-			const statusMessage = document.createElement('img');
+			let statusMessage = document.createElement('img');
 			statusMessage.src = message.loading;
 			statusMessage.style.cssText = `
 				display: block;
@@ -308,9 +331,9 @@ window.addEventListener('DOMContentLoaded', () => {
 		}, 4000);
 	}
 
-	fetch('http://localhost:3000/menu')
-		.then(data => data.json())
-		.then(res => console.log(res));
+	// fetch('http://localhost:3000/menu')
+	// 	.then(data => data.json());
+	// .then(res => console.log(res));
 
 	// Пример Fetch API
 
@@ -323,4 +346,55 @@ window.addEventListener('DOMContentLoaded', () => {
 	// })
 	// .then(response => response.json())
 	// .then(json => console.log(json));
+
+
+	// Slider
+
+	// Получаем элементы с нашей страницы
+	const slides = document.querySelectorAll('.offer__slide'),
+		prev = document.querySelector('.offer__slider-prev'),
+		next = document.querySelector('.offer__slider-next'),
+		total = document.querySelector('#total'),
+		current = document.querySelector('#current');
+	let slideIndex = 1;
+
+	showSlides(slideIndex);
+
+	if (slides.length < 10) {
+		total.textContent = `0${slides.length}`;
+	} else {
+		total.textContent = slides.length;
+	}
+
+	function showSlides(n) {
+		if (n > slides.length) {
+			slideIndex = 1;
+		}
+
+		if (n < 1) {
+			slideIndex = slides.length;
+		}
+
+		slides.forEach(item => item.style.display = 'none');
+
+		slides[slideIndex - 1].style.display = 'block';
+
+		if (slides.length < 10) {
+			current.textContent = `0${slideIndex}`;
+		} else {
+			current.textContent = slideIndex;
+		}
+	}
+
+	function plusSlides(n) {
+		showSlides(slideIndex += n);
+	}
+
+	prev.addEventListener('click', () => {
+		plusSlides(-1);
+	});
+
+	next.addEventListener('click', () => {
+		plusSlides(1);
+	});
 });
