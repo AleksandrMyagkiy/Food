@@ -1,3 +1,5 @@
+import {getResource} from '../services/services';
+
 function cards() {
     	// Используем классы для карточек
 
@@ -58,6 +60,7 @@ function cards() {
 				new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
 			});
 		});
+
 }
 
-module.exports = cards;
+export default cards;
